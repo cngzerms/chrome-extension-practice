@@ -12,6 +12,7 @@ function eventListeners(){
     inputBtn.addEventListener("click",addNewLead);
     deleteBtn.addEventListener("click",deleteAll);
     saveTabBtn.addEventListener("click",addLeadWithTab);
+    ulEl.addEventListener("click",deleteLink);
 }
 
 function addNewLead(){
@@ -29,12 +30,18 @@ function addNewLead(){
 function renderLeads(lead){
     const li = document.createElement("li");
     const a = document.createElement("a");
+    const i = document.createElement("i");
 
     a.href = `${lead}`;
     a.appendChild(document.createTextNode(lead));
     a.setAttribute("target","_blank");
-
+    
+    i.className = "fas fa-times del2";
+    i.style.float = "right";
+    i.style.cursor = "pointer";
+    
     li.appendChild(a);
+    li.appendChild(i);
     ulEl.appendChild(li);
 
     inputEl.value = "";
@@ -56,6 +63,14 @@ function getLeadsFromLS(){
     return leads;
 }
 
+function deleteLink(e){
+    if(e.target.classList.contains("del2")){
+        e.target.parentElement.remove();
+        deleteFromLS(e.target.previousElementSibling.innerHTML);
+        showAlert("Başarıyla Silindi","success");
+    }
+}
+
 function loadAllLeads(){
     let leads = getLeadsFromLS();
     leads.forEach(function(lead){
@@ -67,6 +82,16 @@ function deleteAll(){
     localStorage.clear();
     ulEl.innerHTML = "";
     showAlert("Başarıyla Temizlendi!","danger");
+}
+
+function deleteFromLS(text){
+    let leads = getLeadsFromLS();
+    for(let i=0; i < leads.length; i++){
+        if(leads[i] === text){
+            leads.splice(i,1);
+        }
+    }
+    localStorage.setItem("myLeads",JSON.stringify(leads));
 }
 
 function addLeadWithTab(){
